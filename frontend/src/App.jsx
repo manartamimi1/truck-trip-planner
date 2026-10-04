@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import RouteMap from './components/RouteMap.jsx'
 import ELDLogs from './components/ELDLogs.jsx'
 import TripForm from './components/TripForm.jsx'
@@ -10,15 +10,20 @@ function App() {
   const [result, setResult] = useState(null)
   const [requestError, setRequestError] = useState('')
   const [loading, setLoading] = useState(false)
+  const requestInFlight = useRef(false)
 
   async function handlePlanTrip(data) {
+    if (requestInFlight.current) return
+    requestInFlight.current = true
     setLoading(true)
     setRequestError('')
+    setResult(null)
     try {
       setResult(await planTrip(data))
     } catch (error) {
       setRequestError(error.message)
     } finally {
+      requestInFlight.current = false
       setLoading(false)
     }
   }
@@ -67,7 +72,13 @@ function App() {
               </span>}
             </div>
 
-            {result ? (
+            {loading ? (
+              <div className="empty-state plan-loading" role="status" aria-live="polite">
+                <span className="button-spinner plan-loading-spinner" aria-hidden="true" />
+                <h3>Planning your trip</h3>
+                <p>Resolving locations and preparing the route and driver schedule.</p>
+              </div>
+            ) : result ? (
               <div className="results-content">
                 <RouteMap result={result} />
                 <TripSummary result={result} />

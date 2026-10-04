@@ -5,6 +5,7 @@ import ELDLogSheet from './ELDLogSheet.jsx'
 function ELDLogs({ result }) {
   const logData = useMemo(
     () => {
+      if (result.status === 'cycle_limit_reached') return { days: [] }
       try {
         return { days: createEldLogs(result.timeline, result.summary.total_elapsed_hours, result.locations) }
       } catch (error) {
@@ -14,6 +15,19 @@ function ELDLogs({ result }) {
     [result],
   )
   const { days = [] } = logData
+
+  if (result.status === 'cycle_limit_reached') {
+    return (
+      <section className="eld-logs-section" aria-labelledby="eld-logs-title">
+        <div className="eld-logs-heading">
+          <div><p className="eyebrow">DRIVER LOGS</p><h2 id="eld-logs-title">Daily ELD Logs</h2></div>
+        </div>
+        <p className="eld-data-warning" role="status">
+          This trip plan stops at the cycle limit. Daily logs are not generated for an incomplete trip, and unplanned time is not assigned a duty status.
+        </p>
+      </section>
+    )
+  }
 
   if (logData.error) {
     return (

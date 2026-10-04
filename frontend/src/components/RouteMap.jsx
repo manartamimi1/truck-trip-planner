@@ -58,9 +58,44 @@ function FitRouteBounds({ boundsPoints }) {
   const map = useMap()
 
   useEffect(() => {
-    if (boundsPoints.length) {
-      map.fitBounds(L.latLngBounds(boundsPoints), { padding: [28, 28], maxZoom: 11 })
-      requestAnimationFrame(() => map.invalidateSize())
+    if (!boundsPoints.length) return undefined
+
+    let frame = 0
+    let active = true
+    const bounds = L.latLngBounds(boundsPoints)
+    const container = map.getContainer()
+
+    const fitRoute = () => {
+      frame = 0
+      if (!active || !container.isConnected) return
+      const { x: width, y: height } = map.getSize()
+      if (!width || !height) return
+
+      map.invalidateSize({ pan: false, debounceMoveend: true })
+      map.fitBounds(bounds, {
+        padding: [32, 32],
+        maxZoom: 11,
+        animate: false,
+      })
+    }
+
+    const scheduleFit = () => {
+      if (!frame) frame = requestAnimationFrame(fitRoute)
+    }
+
+    const resizeObserver = typeof ResizeObserver === 'undefined'
+      ? null
+      : new ResizeObserver(scheduleFit)
+    resizeObserver?.observe(container)
+    map.whenReady(scheduleFit)
+    window.addEventListener('resize', scheduleFit)
+    scheduleFit()
+
+    return () => {
+      active = false
+      if (frame) cancelAnimationFrame(frame)
+      resizeObserver?.disconnect()
+      window.removeEventListener('resize', scheduleFit)
     }
   }, [map, boundsPoints])
 

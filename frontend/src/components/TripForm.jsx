@@ -118,7 +118,7 @@ function TripForm({ onPlanTrip, loading, requestError, clearRequestError }) {
 
       {requestError && <div className="request-error" role="alert">{requestError}</div>}
 
-      <button className="primary-button" type="submit" disabled={loading}>
+      <button className="primary-button" type="submit" disabled={loading} aria-busy={loading}>
         {loading ? <><span className="button-spinner" aria-hidden="true" />Planning trip…</> : <>Plan trip <span aria-hidden="true">→</span></>}
       </button>
       <p className="form-footnote">All trip locations and cycle hours are required.</p>

@@ -4,6 +4,14 @@ __pycache__/
 *$py.class
 *.sqlite3
 *.log
+.coverage
+coverage/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.swp
+*.swo
+*.code-workspace
 .venv/
 venv/
 env/
@@ -29,6 +37,7 @@ pnpm-debug.log*
 # IDEs and editors
 .idea/
 .vscode/
+.history/
 *.sublime-project
 *.sublime-workspace
 

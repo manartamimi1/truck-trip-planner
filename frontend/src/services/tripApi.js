@@ -2,14 +2,24 @@ const configuredBaseUrl = import.meta.env.VITE_API_BASE_URL
 const API_BASE_URL = (configuredBaseUrl || 'http://127.0.0.1:8000').replace(/\/$/, '')
 
 function readableError(payload, statusCode) {
-  if (typeof payload?.detail === 'string') return payload.detail
-
   const fieldLabels = {
     current_location: 'Current location',
     pickup_location: 'Pickup location',
     dropoff_location: 'Dropoff location',
     current_cycle_used: 'Current cycle used',
   }
+  if (typeof payload?.detail === 'string') {
+    const geocodingFailure = payload.detail.match(/^Geocoding service is unavailable while resolving ([a-z_]+)\.$/)
+    if (geocodingFailure) {
+      const locationLabel = fieldLabels[geocodingFailure[1]]?.toLowerCase() ?? 'the requested location'
+      return `The geocoding service is temporarily unavailable while looking up ${locationLabel}. Please try again.`
+    }
+    if (payload.detail === 'Routing service is unavailable.') {
+      return 'The routing service is temporarily unavailable. Please try again.'
+    }
+    return payload.detail
+  }
+
   if (payload && typeof payload === 'object') {
     const messages = Object.entries(payload)
       .filter(([key]) => fieldLabels[key])
