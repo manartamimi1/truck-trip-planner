@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import RouteMap from './components/RouteMap.jsx'
 import TripForm from './components/TripForm.jsx'
 import TripSummary from './components/TripSummary.jsx'
 import TripTimeline from './components/TripTimeline.jsx'
@@ -67,6 +68,7 @@ function App() {
 
             {result ? (
               <div className="results-content">
+                <RouteMap result={result} />
                 <TripSummary result={result} />
                 <TripTimeline events={result.timeline} />
               </div>
