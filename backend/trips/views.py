@@ -1,10 +1,20 @@
+import logging
+
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 
-from .serializers import RouteRequestSerializer
+from .serializers import RouteRequestSerializer, TripPlanRequestSerializer
 from .services.geocoding import LocationNotFoundError, GeocodingError, geocode_location
 from .services.routing import RoutingError, get_driving_route
+from .services.trip_planner import (
+    TripLocationNotFound,
+    TripPlanningUpstreamError,
+    create_trip_plan,
+)
+
+
+logger = logging.getLogger(__name__)
 
 
 @api_view(["GET"])
@@ -74,3 +84,23 @@ def route_trip(request):
             },
         }
     )
+
+
+@api_view(["POST"])
+def plan_trip(request):
+    serializer = TripPlanRequestSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+
+    try:
+        result = create_trip_plan(**serializer.validated_data)
+    except TripLocationNotFound as exc:
+        return Response({exc.field: [str(exc)]}, status=status.HTTP_400_BAD_REQUEST)
+    except TripPlanningUpstreamError as exc:
+        return Response({"detail": str(exc)}, status=status.HTTP_502_BAD_GATEWAY)
+    except Exception:
+        logger.exception("Unexpected error while planning a trip.")
+        return Response(
+            {"detail": "An unexpected error occurred while planning the trip."},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
+    return Response(result, status=status.HTTP_200_OK)
