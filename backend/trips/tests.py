@@ -41,6 +41,10 @@ class RouteEndpointTests(SimpleTestCase):
             "distance_meters": 160934.4,
             "duration_seconds": 7200,
             "geometry": geometry,
+            "legs": [
+                {"distance_meters": 100000, "duration_seconds": 3600},
+                {"distance_meters": 60934.4, "duration_seconds": 3600},
+            ],
         }
 
         response = self.client.post(self.url, self.payload, format="json")
@@ -49,6 +53,27 @@ class RouteEndpointTests(SimpleTestCase):
         self.assertEqual(response.data["route"]["distance_miles"], 100)
         self.assertEqual(response.data["route"]["duration_hours"], 2)
         self.assertEqual(response.data["route"]["geometry"], geometry)
+        self.assertEqual(len(response.data["route"]["legs"]), 2)
+        self.assertEqual(
+            response.data["route"]["legs"],
+            [
+                {
+                    "from": "current",
+                    "to": "pickup",
+                    "distance_miles": 100000 / 1609.344,
+                    "duration_hours": 1,
+                },
+                {
+                    "from": "pickup",
+                    "to": "dropoff",
+                    "distance_miles": 60934.4 / 1609.344,
+                    "duration_hours": 1,
+                },
+            ],
+        )
+        for leg in response.data["route"]["legs"]:
+            self.assertIn("distance_miles", leg)
+            self.assertIn("duration_hours", leg)
         self.assertEqual(
             [call.args[0] for call in geocode.call_args_list],
             ["Chicago, IL", "Indianapolis, IN", "Atlanta, GA"],
@@ -118,7 +143,15 @@ class RoutingServiceTests(SimpleTestCase):
         response = Mock()
         response.json.return_value = {
             "code": "Ok",
-            "routes": [{"distance": 1000, "duration": 720, "geometry": geometry}],
+            "routes": [{
+                "distance": 1000,
+                "duration": 720,
+                "geometry": geometry,
+                "legs": [
+                    {"distance": 400, "duration": 300},
+                    {"distance": 600, "duration": 420},
+                ],
+            }],
         }
         get.return_value = response
         locations = [
@@ -129,7 +162,15 @@ class RoutingServiceTests(SimpleTestCase):
 
         self.assertEqual(
             get_driving_route(locations),
-            {"distance_meters": 1000, "duration_seconds": 720, "geometry": geometry},
+            {
+                "distance_meters": 1000,
+                "duration_seconds": 720,
+                "geometry": geometry,
+                "legs": [
+                    {"distance_meters": 400, "duration_seconds": 300},
+                    {"distance_meters": 600, "duration_seconds": 420},
+                ],
+            },
         )
         self.assertIn("-87.6,41.8;-86.1,39.7;-84.3,33.7", get.call_args.args[0])
         self.assertEqual(

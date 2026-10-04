@@ -52,6 +52,17 @@ def route_trip(request):
             status=status.HTTP_502_BAD_GATEWAY,
         )
 
+    leg_names = [("current", "pickup"), ("pickup", "dropoff")]
+    response_legs = [
+        {
+            "from": from_location,
+            "to": to_location,
+            "distance_miles": leg["distance_meters"] / 1609.344,
+            "duration_hours": leg["duration_seconds"] / 3600,
+        }
+        for (from_location, to_location), leg in zip(leg_names, route["legs"])
+    ]
+
     return Response(
         {
             "locations": response_locations,
@@ -59,6 +70,7 @@ def route_trip(request):
                 "distance_miles": route["distance_meters"] / 1609.344,
                 "duration_hours": route["duration_seconds"] / 3600,
                 "geometry": route["geometry"],
+                "legs": response_legs,
             },
         }
     )

@@ -39,8 +39,21 @@ def get_driving_route(locations):
         distance_meters = float(route["distance"])
         duration_seconds = float(route["duration"])
         geometry = route["geometry"]
+        raw_legs = route["legs"]
         if not isinstance(geometry, dict) or geometry.get("type") != "LineString":
             raise ValueError("Expected GeoJSON LineString geometry.")
+        if not isinstance(raw_legs, list) or len(raw_legs) != len(locations) - 1:
+            raise ValueError("OSRM returned an unexpected number of route legs.")
+        legs = [
+            {
+                "distance_meters": float(leg["distance"]),
+                "duration_seconds": float(leg["duration"]),
+            }
+            for leg in raw_legs
+            if isinstance(leg, dict)
+        ]
+        if len(legs) != len(raw_legs):
+            raise ValueError("OSRM returned an invalid route leg.")
     except (KeyError, TypeError, ValueError) as exc:
         raise RoutingError("OSRM returned an invalid route result.") from exc
 
@@ -48,4 +61,5 @@ def get_driving_route(locations):
         "distance_meters": distance_meters,
         "duration_seconds": duration_seconds,
         "geometry": geometry,
+        "legs": legs,
     }
