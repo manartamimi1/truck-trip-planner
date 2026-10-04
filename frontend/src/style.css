@@ -153,6 +153,48 @@ h1 { margin-bottom: 6px; font-size: clamp(25px, 3vw, 31px); letter-spacing: -.04
 .event-duration { color: #334254; font-size: 11px; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .event-duration small { color: #84909c; font-size: 9px; font-weight: 500; }
 .timeline-meta { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 5px 12px; margin-top: 6px; color: #9aa4ad; font-size: 9px; }
+.eld-logs-section { display: grid; gap: 13px; }
+.eld-logs-heading { display: flex; align-items: end; justify-content: space-between; gap: 12px; padding: 1px 2px; }
+.eld-logs-heading h2 { margin: 0; font-size: 17px; letter-spacing: -.025em; }
+.eld-logs-heading .eyebrow { margin-bottom: 4px; }
+.eld-logs-heading > span, .eld-period-label { color: #82909d; font-size: 10px; }
+.eld-data-warning { margin: 0; padding: 13px 15px; color: #805a2b; background: #fbf6eb; border: 1px solid #eee2c5; border-radius: 7px; font-size: 11px; line-height: 1.5; }
+.eld-sheets { display: grid; gap: 15px; }
+.eld-sheet { min-width: 0; padding: 18px 20px 14px; }
+.eld-sheet-heading { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 4px; }
+.eld-sheet-heading .eyebrow { margin-bottom: 4px; font-variant-numeric: tabular-nums; }
+.eld-sheet-heading h3 { margin: 0; font-size: 15px; }
+.eld-period-label { padding: 5px 8px; background: #f4f6f7; border-radius: 4px; }
+.eld-graph-scroll { width: 100%; overflow-x: auto; overscroll-behavior-x: contain; }
+.eld-graph-scroll:focus-visible { outline: 2px solid rgb(20 107 104 / 55%); outline-offset: -2px; }
+.eld-graph { display: block; width: 100%; min-width: 790px; height: auto; overflow: visible; }
+.eld-grid-major { stroke: #e4e9ed; stroke-width: 1; }
+.eld-grid-minor { stroke: #eef1f3; stroke-width: .8; }
+.eld-row-guide { stroke: #cfd8df; stroke-width: 1; }
+.eld-axis-edge { stroke: #c5cfd7; stroke-width: 1.2; }
+.eld-hour-label { fill: #738190; font-family: 'Segoe UI', Arial, sans-serif; font-size: 11px; font-variant-numeric: tabular-nums; }
+.eld-status-label { fill: #485869; font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; font-weight: 650; }
+.eld-status-sublabel { fill: #788695; font-size: 9px; font-weight: 500; }
+.eld-status-dot, .eld-total-dot { fill: #98a4af; }
+.eld-status-sleeper_berth { fill: #74839a; }
+.eld-status-driving { fill: #176b68; }
+.eld-status-on_duty { fill: #bd8151; }
+.eld-status-off_duty { fill: #9aa5ae; }
+.eld-duty-line { fill: none; stroke: #176b68; stroke-width: 2.4; stroke-linecap: square; stroke-linejoin: miter; vector-effect: non-scaling-stroke; }
+.eld-details-grid { display: grid; grid-template-columns: minmax(210px, .72fr) minmax(0, 1.6fr); gap: 26px; padding: 4px 2px 0; }
+.eld-details-grid h4 { margin: 0 0 10px; color: #334254; font-size: 11px; }
+.eld-totals dl { margin: 0; }
+.eld-total-row { min-height: 26px; display: flex; align-items: center; justify-content: space-between; gap: 14px; color: #617080; font-size: 10px; }
+.eld-total-row dt { display: inline-flex; align-items: center; gap: 7px; }
+.eld-total-dot { width: 7px; height: 7px; border-radius: 50%; }
+.eld-total-row dd { margin: 0; color: #334254; font-variant-numeric: tabular-nums; }
+.eld-total-final { margin-top: 5px; padding-top: 7px; color: #26384a; border-top: 1px solid #e3e8ec; font-weight: 700; }
+.eld-remarks ul { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.eld-remarks li { display: grid; grid-template-columns: 43px minmax(0, 1fr); gap: 9px; color: #687787; font-size: 10px; line-height: 1.45; }
+.eld-remarks time { color: #344759; font-variant-numeric: tabular-nums; font-weight: 650; }
+.eld-remarks strong { color: #344759; font-weight: 650; }
+.eld-no-remarks { margin: 0; color: #8995a0; font-size: 10px; }
+.eld-assumption { margin: 10px 1px 0; padding-top: 9px; color: #8a96a2; border-top: 1px solid #edf0f2; font-size: 9px; line-height: 1.5; }
 .page-footer { padding-top: 16px; color: #9aa4ad; text-align: right; font-size: 9px; }
 
 @media (max-width: 1000px) {
@@ -171,6 +213,8 @@ h1 { margin-bottom: 6px; font-size: clamp(25px, 3vw, 31px); letter-spacing: -.04
   .empty-state { min-height: 260px; }
   .route-map-frame { height: 320px; }
   .map-panel-heading { align-items: flex-start; flex-direction: column; }
+  .eld-sheet { padding: 16px 14px 12px; }
+  .eld-details-grid { grid-template-columns: minmax(0, 1fr); gap: 18px; }
   .connection-status { font-size: 10px; }
 }
 

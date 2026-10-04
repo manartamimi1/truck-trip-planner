@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import RouteMap from './components/RouteMap.jsx'
+import ELDLogs from './components/ELDLogs.jsx'
 import TripForm from './components/TripForm.jsx'
 import TripSummary from './components/TripSummary.jsx'
 import TripTimeline from './components/TripTimeline.jsx'
@@ -71,6 +72,7 @@ function App() {
                 <RouteMap result={result} />
                 <TripSummary result={result} />
                 <TripTimeline events={result.timeline} />
+                <ELDLogs result={result} />
               </div>
             ) : (
               <div className="empty-state">
