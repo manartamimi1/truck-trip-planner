@@ -1,11 +1,36 @@
 """Django settings for the Truck Trip Planner API."""
+import os
 from pathlib import Path
+
+from django.core.exceptions import ImproperlyConfigured
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = "django-insecure-development-key-change-before-deployment"
-DEBUG = True
-ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
+DEBUG = os.environ.get("DJANGO_DEBUG", "true").strip().lower() in {
+    "1", "true", "yes", "on"
+}
+
+_DEVELOPMENT_SECRET_KEY = "django-insecure-development-key-change-before-deployment"
+SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
+if not SECRET_KEY:
+    if not DEBUG:
+        raise ImproperlyConfigured(
+            "Set DJANGO_SECRET_KEY when DJANGO_DEBUG is disabled."
+        )
+    SECRET_KEY = _DEVELOPMENT_SECRET_KEY
+
+
+def _csv_environment_setting(name, default):
+    return [
+        value.strip()
+        for value in os.environ.get(name, default).split(",")
+        if value.strip()
+    ]
+
+
+ALLOWED_HOSTS = _csv_environment_setting(
+    "ALLOWED_HOSTS", "localhost,127.0.0.1"
+)
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -72,4 +97,7 @@ USE_TZ = True
 STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-CORS_ALLOWED_ORIGINS = ["http://localhost:5173", "http://127.0.0.1:5173"]
+CORS_ALLOWED_ORIGINS = _csv_environment_setting(
+    "CORS_ALLOWED_ORIGINS",
+    "http://localhost:5173,http://127.0.0.1:5173",
+)
